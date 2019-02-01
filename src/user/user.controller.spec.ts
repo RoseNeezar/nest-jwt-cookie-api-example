@@ -29,10 +29,11 @@ describe('AuthController', () => {
     globalPipes(app);
     server = app.getHttpServer();
     await app.init();
-    agent  = supertest.agent(server);
+    agent = supertest.agent(server);
 
     // delete test user
     await userService.delete(undefined, authDetails.username);
+    await userService.delete(undefined, 'another-user');
   });
 
   it('should sign up', async () => {
@@ -41,7 +42,7 @@ describe('AuthController', () => {
       .send(authDetails)
       .expect(201)
       .expect('set-cookie', /token/)
-      .expect('set-cookie', /HttpOnly/)
+      .expect('set-cookie', /HttpOnly/);
   });
 
   it('should get me', async () => {
@@ -52,10 +53,33 @@ describe('AuthController', () => {
       .expect(200)
       .expect('set-cookie', /token/)
       .expect('set-cookie', /HttpOnly/)
-      .expect({ username: authDetails.username })
+      .expect({ username: authDetails.username });
+  });
+
+  it('should signup another user', async () => {
+    await supertest
+      .agent(server)
+      .post('/signup')
+      .send({
+        username: 'another-user',
+        password: 'randompassword21',
+      })
+      .expect(201)
+      .expect('set-cookie', /token/)
+      .expect('set-cookie', /HttpOnly/);
+  });
+
+  it('should get other user', async () => {
+    await agent
+      .get('/user/another-user')
+      .set('Accept', 'application/json')
+      .expect(200)
+      .expect({ username: 'another-user' });
   });
 
   afterAll(async () => {
+    await userService.delete(undefined, authDetails.username);
+    await userService.delete(undefined, 'another-user');
     await connection.close();
     await app.close();
   });
