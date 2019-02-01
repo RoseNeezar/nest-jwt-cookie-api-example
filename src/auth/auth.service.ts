@@ -63,12 +63,22 @@ export class AuthService {
     id: string,
     data: UpdatePasswordDto,
   ): Promise<null> {
-    let oldPassword = await this.hashPassword(data.oldpassword);
-    let newPassword = await this.hashPassword(data.password);
+
+    // get the password from the database
+    // bcrypt makes salt each time
+    const user = await this.userService.findOneOrFail({id: id});
+    const oldPasswordHash = user.password;
+    if (!await this.checkPassword(data.oldpassword, user.password)) {
+      throw new BadRequestException("Old password is wrong.");
+    }
+
+    let newPasswordHash = await this.hashPassword(data.newpassword);
     try {
+      // todo, update does not give us a usable result
+      // but keeping it since this update is atomic
       await this.userService.update(
-        { id: id, password: oldPassword },
-        { password: newPassword },
+        { id: id, password: oldPasswordHash },
+        { password: newPasswordHash },
       );
       return;
     } catch (error) {

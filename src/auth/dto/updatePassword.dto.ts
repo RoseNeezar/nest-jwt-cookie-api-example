@@ -9,7 +9,7 @@ export class UpdatePasswordDto {
   @IsString()
   @MinLength(USER_PASSWORD_MIN_LENGTH)
   @MaxLength(USER_PASSWORD_MAX_LENGTH)
-  readonly password: string;
+  readonly newpassword: string;
 
   @IsNotEmpty()
   @IsString()

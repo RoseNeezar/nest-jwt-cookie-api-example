@@ -44,6 +44,16 @@ describe('AuthController', () => {
       .expect('set-cookie', /HttpOnly/)
   });
 
+  it('should not allow to signup with existing token', async () => {
+    await agent
+      .post('/signup')
+      .send({
+        'username': 'spammer',
+        'password': 'the-not-so-nice-fella'
+      })
+      .expect(400)
+  });
+
   it('should log in', async () => {
     // yes, the user is already logged in
     await agent
@@ -56,6 +66,18 @@ describe('AuthController', () => {
       .expect({ username: authDetails.username });
   });
 
+  it('should not change password if old one wrong', async () => {
+    // yes, the user is already logged in
+    await agent
+      .patch('/me/update-password')
+      .set('Accept', 'application/json')
+      .send({
+        oldpassword: "WrongPassword",
+        newpassword: "RandomPassword4",
+      })
+      .expect(400)
+  });
+
   it('should change password', async () => {
     // yes, the user is already logged in
     await agent
@@ -63,11 +85,26 @@ describe('AuthController', () => {
       .set('Accept', 'application/json')
       .send({
         oldpassword: authDetails.password,
-        password: "RandomPassword4",
+        newpassword: "RandomPassword4",
       })
       .expect(200)
       .expect('set-cookie', /token/)
       .expect('set-cookie', /HttpOnly/)
+  });
+
+  it('should log in with new pass', async () => {
+    // yes, the user is already logged in
+    await agent
+      .post('/login')
+      .set('Accept', 'application/json')
+      .send({
+        username: authDetails.username,
+        password: "RandomPassword4"
+      })
+      .expect(200)
+      .expect('set-cookie', /token/)
+      .expect('set-cookie', /HttpOnly/)
+      .expect({ username: authDetails.username });
   });
 
   afterAll(async () => {

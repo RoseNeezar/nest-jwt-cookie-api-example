@@ -4,6 +4,7 @@ import { UserEntity } from './user.entity';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { AuthModule } from '../auth/auth.module';
+import { AuthMiddleware } from '../auth/auth.middleware';
 
 @Module({
   imports: [
@@ -19,6 +20,9 @@ import { AuthModule } from '../auth/auth.module';
   ]
 })
 export class UserModule implements NestModule {
-  public configure() {
+  public configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes('me');
   }
 }

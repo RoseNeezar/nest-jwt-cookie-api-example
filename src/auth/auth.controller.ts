@@ -7,7 +7,7 @@ import {
   Req,
   UseGuards,
   Res,
-  HttpStatus,
+  HttpStatus, BadRequestException,
 } from '@nestjs/common';
 
 import { TokenDto } from './dto/token.dto';
@@ -30,6 +30,9 @@ export class AuthController {
     @Req() req,
     @Res() res,
   ): Promise<UserStatusDto> {
+    if (req.token) {
+      throw new BadRequestException("Already authed.")
+    }
     const user = await this.authService.signup(data);
     res.cookie('token', await this.authService.createToken(user), { httpOnly: true });
     res.status(HttpStatus.CREATED);
