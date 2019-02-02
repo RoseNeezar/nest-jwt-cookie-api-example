@@ -101,6 +101,22 @@ describe('AuthController', () => {
       });
   });
 
+  it('should return a specific limit of users', async () => {
+    // use fresh client
+    await supertest
+      .agent(server)
+      .get(`/most-liked?limit=1`)
+      .expect(200)
+      .expect(res => {
+        if (parseInt(res.body.limit, 10) !== 1) {
+          throw new Error();
+        }
+        if (res.body.results.length !== 1) {
+          throw new Error();
+        }
+      });
+  });
+
   afterAll(async () => {
     await userService.delete(undefined, authDetails1.username);
     await userService.delete(undefined, authDetails2.username);

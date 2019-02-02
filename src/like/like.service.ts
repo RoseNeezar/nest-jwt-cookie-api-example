@@ -109,6 +109,8 @@ export class LikeService {
 
     const results = await query.getRawMany();
 
+    // todo, numbers are returned as strings instead of numbers, despite the DTO, I'm missing something here.
+
     return {
       results,
       // the actual page and limit of the results
