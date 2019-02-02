@@ -88,10 +88,10 @@ export class LikeService {
     options: UserLikesPaginationOptionsDto,
   ): Promise<UserLikesPaginationResultsDto> {
     // use sane defaults
-    const limit = options.limit || 20;
-    const page = options.page || 1;
+    const limit = options.limit ? Number.parseInt(options.limit, 10) : 20;
+    const page = options.page ? Number.parseInt(options.page, 10) : 1;
 
-    if (options.limit < 1 || options.limit > 100) {
+    if (limit < 1 || limit > 100) {
       throw new BadRequestException('Limit is limited to 100');
     }
 
@@ -108,8 +108,6 @@ export class LikeService {
     // console.log(query.getSql());
 
     const results = await query.getRawMany();
-
-    // todo, numbers are returned as strings instead of numbers, despite the DTO, I'm missing something here.
 
     return {
       results,

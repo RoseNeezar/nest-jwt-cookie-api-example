@@ -1,14 +1,23 @@
+// tslint:disable max-classes-per-file
+
+import { IsNumberString, IsOptional } from 'class-validator';
+
 export interface UserLikesDto {
   limit: number;
   page: number;
 }
 
-export interface UserLikesPaginationOptionsDto {
-  limit?: number;
-  page?: number;
+export class UserLikesPaginationOptionsDto {
+  @IsNumberString()
+  @IsOptional()
+  readonly limit?: string;
+
+  @IsNumberString()
+  @IsOptional()
+  readonly page?: string;
 }
 
-export interface UserLikesPaginationResultsDto {
+export class UserLikesPaginationResultsDto {
   results: UserLikesDto[];
   page: number;
   limit: number;

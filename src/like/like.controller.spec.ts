@@ -105,7 +105,7 @@ describe('AuthController', () => {
     // use fresh client
     await supertest
       .agent(server)
-      .get(`/most-liked?limit=1`)
+      .get(`/most-liked?limit=1&page=1`)
       .expect(200)
       .expect(res => {
         if (parseInt(res.body.limit, 10) !== 1) {
