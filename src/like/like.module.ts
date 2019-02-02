@@ -18,6 +18,7 @@ import { AuthModule } from '../auth/auth.module';
   ],
   controllers: [LikeController],
   providers: [LikeService],
+  exports: [LikeService],
 })
 export class LikeModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {
