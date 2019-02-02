@@ -51,6 +51,26 @@ describe('AuthController', () => {
       .expect(400);
   });
 
+  it('should not allow to signup with strange username', async () => {
+    await agent
+      .post('/signup')
+      .send({
+        username: 'Jonny\' DROP TABLE users; \'',
+        password: authDetails,
+      })
+      .expect(400);
+  });
+
+  it('should not allow to signup with strange password', async () => {
+    await agent
+      .post('/signup')
+      .send({
+        username: authDetails.username,
+        password: 'password',
+      })
+      .expect(400);
+  });
+
   it('should log in', async () => {
     // yes, the user is already logged in
     await agent

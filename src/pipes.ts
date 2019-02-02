@@ -26,6 +26,8 @@ export function globalPipes(app) {
       whitelist: true,
       // convert payloads to DTO classes
       transform: true,
+      // todo hide error details
+      // disableErrorMessages: true
     }),
   );
 }

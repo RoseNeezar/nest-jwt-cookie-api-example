@@ -36,6 +36,8 @@ describe('AuthController', () => {
     agent = supertest.agent(server);
   });
 
+  // todo move auth tests to /auth module
+
   it('should sign up', async () => {
     await agent
       .post('/signup')
