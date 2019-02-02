@@ -8,7 +8,9 @@ import * as path from 'path';
 
 @Module({
   imports: [
-    ConfigModule.load(path.resolve(__dirname, 'config', '**', '!(*.d).{ts,js}')),
+    ConfigModule.load(
+      path.resolve(__dirname, 'config', '**', '!(*.d).{ts,js}'),
+    ),
 
     TypeOrmModule.forRootAsync({
       useFactory: (config: ConfigService) => config.get('database'),

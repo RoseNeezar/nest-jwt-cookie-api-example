@@ -16,6 +16,7 @@ export class UserService {
     try {
       return await this.userRepository.findOneOrFail(conditions);
     } catch (e) {
+      //
       throw new BadRequestException('Error fetching user.');
     }
   }
@@ -26,22 +27,18 @@ export class UserService {
    * @param username
    */
   public async delete(id: string, username?: string): Promise<null> {
-    let criteria = {};
-
+    const criteria = new UserEntity();
     if (!username && !id) {
       {
         throw new BadRequestException(`Could not delete user.`);
       }
     }
-
     if (username) {
-      criteria['usernane'] = username;
+      criteria.username = username;
     }
-
     if (id) {
-      criteria['id'] = id;
+      criteria.id = id;
     }
-
     try {
       await this.userRepository.delete(criteria);
       return;
@@ -56,14 +53,15 @@ export class UserService {
   }
 
   public async create(entity: UserEntity): Promise<UserEntity> {
-
     // Todo, Lower/uppercase index
     // https://github.com/typeorm/typeorm/blob/master/docs/indices.md#disabling-synchronization
     // https://github.com/typeorm/typeorm/issues/356
     // todo the next code is vulnerable to timing issues, transactions?
-    let existingUser = await this.userRepository
+    const existingUser = await this.userRepository
       .createQueryBuilder()
-      .where('LOWER(username) LIKE :username', { username: `%${entity.username.toLowerCase()}%` })
+      .where('LOWER(username) LIKE :username', {
+        username: `%${entity.username.toLowerCase()}%`,
+      })
       .getCount();
     if (existingUser > 0) {
       throw new BadRequestException('User already exists.');
@@ -73,13 +71,13 @@ export class UserService {
       return await this.userRepository.save(entity);
     } catch (e) {
       if (e instanceof QueryFailedError) {
-        // todo
-        if (e['code'] === '23505') {
+        if ((e as any).code === '23505') {
           // unique violation
           throw new BadRequestException('User already exists.');
         }
       }
-      throw new BadRequestException('Error fetching user.');
+      // todo proper error logging
+      throw new BadRequestException('Error creating user.');
     }
   }
 }

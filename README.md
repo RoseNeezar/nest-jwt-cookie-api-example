@@ -11,6 +11,9 @@
 - todo, seed database /seed/postgres
 - todo ``typeorm migration:run``
 
+- todo Sentry error handling 
+https://github.com/mentos1386/nest-raven
+
 ## Build
 
 ```bash
@@ -48,4 +51,3 @@ npm typeorm:run
 
 Docs are generated from JDoc comments
 todo Swagger?
-

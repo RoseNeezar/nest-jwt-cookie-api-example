@@ -10,7 +10,7 @@ import {
   USER_PASSWORD_MIN_LENGTH,
   USER_USERNAME_MAX_LENGTH,
   USER_USERNAME_MIN_LENGTH,
-  USER_USERNAME_REGEX
+  USER_USERNAME_REGEX,
 } from '../../user/user.entity';
 
 export class SignupDto {

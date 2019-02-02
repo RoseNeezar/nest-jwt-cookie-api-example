@@ -1,6 +1,12 @@
 import * as bcrypt from 'bcryptjs';
 
-import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
@@ -22,23 +28,11 @@ export class AuthService {
   ) {}
 
   public async signup(signup: SignupDto): Promise<UserEntity> {
-    const user = <UserEntity>{
+    const user = {
       username: signup.username,
       password: await this.hashPassword(signup.password),
-    };
-    try {
-      return await this.userService.create(user);
-    } catch (e) {
-      if (e instanceof QueryFailedError) {
-        if (e['code'] === '23505') {
-          // unique violation
-          throw new BadRequestException('User already exists.');
-        }
-      }
-      // todo, make proper logging
-      //console.error(e);
-      throw new BadRequestException('Error creating user.');
-    }
+    } as UserEntity;
+    return await this.userService.create(user);
   }
 
   public async login(credentials: LoginDto): Promise<UserEntity> {
@@ -63,21 +57,20 @@ export class AuthService {
     id: string,
     data: UpdatePasswordDto,
   ): Promise<null> {
-
     // get the password from the database
     // bcrypt makes salt each time
-    const user = await this.userService.findOneOrFail({id: id});
+    const user = await this.userService.findOneOrFail({ id });
     const oldPasswordHash = user.password;
-    if (!await this.checkPassword(data.oldpassword, user.password)) {
-      throw new BadRequestException("Old password is wrong.");
+    if (!(await this.checkPassword(data.oldpassword, user.password))) {
+      throw new BadRequestException('Old password is wrong.');
     }
 
-    let newPasswordHash = await this.hashPassword(data.newpassword);
+    const newPasswordHash = await this.hashPassword(data.newpassword);
     try {
       // todo, update does not give us a usable result
       // but keeping it since this update is atomic
       await this.userService.update(
-        { id: id, password: oldPasswordHash },
+        { id, password: oldPasswordHash },
         { password: newPasswordHash },
       );
       return;
@@ -88,9 +81,9 @@ export class AuthService {
   }
 
   public createToken(user: UserEntity): string {
-    const token = <TokenDto>{
+    const token = {
       id: user.id,
-    };
+    } as TokenDto;
     return this.jwtService.sign(token);
   }
 

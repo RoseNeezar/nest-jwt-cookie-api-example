@@ -1,9 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 
 import { TokenDto } from '../auth/dto/token.dto';
 
@@ -19,23 +14,20 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Get('me')
-  async userStatus(
-    @Token() token: TokenDto
-  ): Promise<UserStatusDto> {
-    let user = await this.userService.findOneOrFail({ id: token.id });
+  async userStatus(@Token() token: TokenDto): Promise<UserStatusDto> {
+    const user = await this.userService.findOneOrFail({ id: token.id });
     return {
-      username: user.username
-    }
+      username: user.username,
+    };
   }
 
   @Get(':username')
   async findOne(@Param() params: FindOneDto): Promise<UserStatusDto> {
-    let user = await this.userService.findOneOrFail({username: params.username});
+    const user = await this.userService.findOneOrFail({
+      username: params.username,
+    });
     return {
-      username: user.username
-    }
+      username: user.username,
+    };
   }
-
-
 }
-

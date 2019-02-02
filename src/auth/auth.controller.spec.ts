@@ -29,8 +29,7 @@ describe('AuthController', () => {
     globalPipes(app);
     server = app.getHttpServer();
     await app.init();
-    agent  = supertest.agent(server);
-
+    agent = supertest.agent(server);
   });
 
   it('should sign up', async () => {
@@ -39,17 +38,17 @@ describe('AuthController', () => {
       .send(authDetails)
       .expect(201)
       .expect('set-cookie', /token/)
-      .expect('set-cookie', /HttpOnly/)
+      .expect('set-cookie', /HttpOnly/);
   });
 
   it('should not allow to signup with existing token', async () => {
     await agent
       .post('/signup')
       .send({
-        'username': 'spammer',
-        'password': 'the-not-so-nice-fella'
+        username: 'spammer',
+        password: 'the-not-so-nice-fella',
       })
-      .expect(400)
+      .expect(400);
   });
 
   it('should log in', async () => {
@@ -70,10 +69,10 @@ describe('AuthController', () => {
       .patch('/me/update-password')
       .set('Accept', 'application/json')
       .send({
-        oldpassword: "WrongPassword",
-        newpassword: "RandomPassword4",
+        oldpassword: 'WrongPassword',
+        newpassword: 'RandomPassword4',
       })
-      .expect(400)
+      .expect(400);
   });
 
   it('should change password', async () => {
@@ -83,11 +82,11 @@ describe('AuthController', () => {
       .set('Accept', 'application/json')
       .send({
         oldpassword: authDetails.password,
-        newpassword: "RandomPassword4",
+        newpassword: 'RandomPassword4',
       })
       .expect(200)
       .expect('set-cookie', /token/)
-      .expect('set-cookie', /HttpOnly/)
+      .expect('set-cookie', /HttpOnly/);
   });
 
   it('should log in with new pass', async () => {
@@ -97,7 +96,7 @@ describe('AuthController', () => {
       .set('Accept', 'application/json')
       .send({
         username: authDetails.username,
-        password: "RandomPassword4"
+        password: 'RandomPassword4',
       })
       .expect(200)
       .expect('set-cookie', /token/)

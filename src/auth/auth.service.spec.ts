@@ -1,7 +1,4 @@
-import {
-  BadRequestException,
-  NotFoundException
-} from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 
 import { UserService } from '../user/user.service';
@@ -12,7 +9,6 @@ import { AuthService } from './auth.service';
 import { AppModule } from '../app.module';
 
 import { Connection } from 'typeorm';
-
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -37,7 +33,6 @@ describe('AuthService', () => {
     userService = module.get<UserService>(UserService);
     authService = module.get<AuthService>(AuthService);
     connection = module.get<Connection>(Connection);
-    //await app.init();
   });
 
   it('should fail unknown username', async () => {

@@ -34,7 +34,6 @@ describe('AuthController', () => {
     server = app.getHttpServer();
     await app.init();
     agent = supertest.agent(server);
-
   });
 
   it('should sign up', async () => {
