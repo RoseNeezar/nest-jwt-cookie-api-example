@@ -5,23 +5,24 @@
  *   https://github.com/nestjs/nest/issues/1438
  */
 export function router () {
+
+  const replacements = [
+    [RegExp(/^\/login$/), '/auth/login'],
+    [RegExp(/^\/signup$/), '/auth/signup'],
+    [RegExp(/^\/me\/update-password$/), '/auth/update-password'],
+    [RegExp(/^\/me$/), '/user/me'],
+    [RegExp(/^\/most-liked$/), '/like/most-liked'],
+    [RegExp(/^\/user\/([^\/]+)\/like$/), '/like/user/$1/like'],
+    [RegExp(/^\/user\/([^\/]+)\/unlike$/), '/like/user/$1/unlike']
+  ];
+
   return function(req, res, next) {
-    switch (req.url) {
-      case "/login":
-        req.url = '/auth/login';
+    const url = req.url;
+    for ( const repl of replacements) {
+      if (url.match(repl[0])) {
+        req.url = req.url.replace(...repl);
         break;
-      case "/signup":
-        req.url = '/auth/signup';
-        break;
-      case "/me/update-password":
-        req.url = '/auth/update-password';
-        break;
-      case "/me":
-        req.url = '/user/me';
-        break;
-      case "/most-liked":
-        req.url = '/like/most-liked';
-        break;
+      }
     }
     next();
   };
