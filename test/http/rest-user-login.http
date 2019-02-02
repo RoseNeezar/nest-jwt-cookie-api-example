@@ -8,5 +8,9 @@ Content-Type: application/json
   "password" : "asdfsadasd"
 }
 
+> {%
+    client.global.set("token", response.headers.valueOf('Set-Cookie'));
+%}
+
 ###
 
