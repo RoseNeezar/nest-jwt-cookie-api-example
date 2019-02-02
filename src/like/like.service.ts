@@ -95,16 +95,19 @@ export class LikeService {
       throw new BadRequestException('Limit is limited to 100');
     }
 
-    const results = await this.likeRepository
+    const query = this.likeRepository
       .createQueryBuilder('like')
       .innerJoin('like.target', 'user')
       .select('user.username', 'username')
       .addSelect('COUNT(*)', 'likes')
       .groupBy('username')
-      .orderBy('likes', 'DESC')
-      .take(limit)
-      .skip((page - 1) * limit)
-      .getRawMany();
+      .limit(limit)
+      .offset((page - 1) * limit)
+      .orderBy('likes', 'DESC');
+
+    // console.log(query.getSql());
+
+    const results = await query.getRawMany();
 
     return {
       results,
