@@ -10,6 +10,10 @@ import { Repository } from 'typeorm';
 import { LikeEntity } from './like.entity';
 import { UserEntity } from '../user/user.entity';
 import { UserService } from '../user/user.service';
+import {
+  UserLikesPaginationOptionsDto,
+  UserLikesPaginationResultsDto,
+} from './dto/pagination.dto';
 
 @Injectable()
 export class LikeService {
@@ -21,7 +25,7 @@ export class LikeService {
   ) {}
 
   /**
-   * Make a relation from a user to a username
+   * "Like" a user by their username
    * @param sourceid
    * @param targetusername
    */
@@ -49,7 +53,7 @@ export class LikeService {
   }
 
   /**
-   * Remove the like relation
+   * "Unlike" a user by their username
    * @param sourceid
    * @param targetusername
    */
@@ -76,6 +80,49 @@ export class LikeService {
     }
   }
 
+  /**
+   * Get a paginated list of most liked users in order and with the count of likes
+   * @param options
+   */
+  async mostLiked(
+    options: UserLikesPaginationOptionsDto,
+  ): Promise<UserLikesPaginationResultsDto> {
+    // use sane defaults
+    const limit = options.limit || 20;
+    const page = options.page || 1;
+
+    if (options.limit < 1 || options.limit > 100) {
+      throw new BadRequestException('Limit is limited to 100');
+    }
+
+    const results = await this.likeRepository
+      .createQueryBuilder('like')
+      .innerJoin('like.target', 'user')
+      .select('user.username', 'username')
+      .addSelect('COUNT(*)', 'likes')
+      .groupBy('username')
+      .orderBy('likes', 'DESC')
+      .take(limit)
+      .skip((page - 1) * limit)
+      .getRawMany();
+
+    return {
+      results,
+      // the actual page and limit of the results
+      page,
+      limit,
+    } as UserLikesPaginationResultsDto;
+  }
+
+  public async countTarget(target: UserEntity): Promise<number> {
+    return await this.likeRepository.count({ target });
+  }
+
+  /**
+   * Check if a target username is liked by a user
+   * @param sourceid
+   * @param targetusername
+   */
   public async isLiked(
     sourceid: string,
     targetusername: string,
@@ -97,9 +144,5 @@ export class LikeService {
     } catch (e) {
       throw new BadRequestException(`Error getting relation.`);
     }
-  }
-
-  public async mostLiked(): Promise<LikeEntity[]> {
-    return await this.likeRepository.find();
   }
 }

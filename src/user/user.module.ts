@@ -10,11 +10,13 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { AuthModule } from '../auth/auth.module';
 import { AuthMiddleware } from '../auth/auth.middleware';
+import { LikeModule } from '../like/like.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity]),
     forwardRef(() => AuthModule),
+    forwardRef(() => LikeModule),
   ],
   controllers: [UserController],
   providers: [UserService],

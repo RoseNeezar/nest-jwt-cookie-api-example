@@ -2,7 +2,9 @@ import {
   Controller,
   HttpStatus,
   Param,
+  Get,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -12,10 +14,21 @@ import { LikeService } from './like.service';
 import { FindOneDto } from '../user/dto/findOne.dto';
 import { Token } from '../auth/auth.decorator';
 import { TokenDto } from '../auth/dto/token.dto';
+import {
+  UserLikesPaginationOptionsDto,
+  UserLikesPaginationResultsDto,
+} from './dto/pagination.dto';
 
 @Controller('like')
 export class LikeController {
   constructor(private readonly likeService: LikeService) {}
+
+  @Get('most-liked')
+  async mostLiked(
+    @Query() query: UserLikesPaginationOptionsDto,
+  ): Promise<UserLikesPaginationResultsDto> {
+    return await this.likeService.mostLiked(query);
+  }
 
   @UseGuards(AuthGuard)
   @Post('user/:username/like')

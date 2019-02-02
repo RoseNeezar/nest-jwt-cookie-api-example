@@ -71,7 +71,11 @@ describe('AuthController', () => {
       .get(`/user/${authDetails2.username}`)
       .set('Accept', 'application/json')
       .expect(200)
-      .expect({ username: authDetails2.username });
+      .expect(res => {
+        if (res.body.username !== authDetails2.username) {
+          throw new Error();
+        }
+      });
   });
 
   afterAll(async () => {

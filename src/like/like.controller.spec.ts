@@ -68,6 +68,39 @@ describe('AuthController', () => {
     await agent.post(`/user/${authDetails2.username}/like`).expect(204);
   });
 
+  it('should return 1 like for user 1', async () => {
+    await agent
+      .get(`/user/${authDetails2.username}`)
+      .expect(200)
+      .expect(res => {
+        if (
+          res.body.username !== authDetails2.username ||
+          res.body.likes !== 1
+        ) {
+          throw new Error();
+        }
+      });
+  });
+
+  it('should return a list of most liked users', async () => {
+    // use fresh client
+    await supertest
+      .agent(server)
+      .get(`/most-liked`)
+      .expect(200)
+      .expect(res => {
+        if (
+          !Number.isInteger(res.body.page) ||
+          !Number.isInteger(res.body.limit)
+        ) {
+          throw new Error();
+        }
+        if (!res.body.results || res.body.results.length < 1) {
+          throw new Error();
+        }
+      });
+  });
+
   afterAll(async () => {
     await userService.delete(undefined, authDetails1.username);
     await userService.delete(undefined, authDetails2.username);
