@@ -14,9 +14,13 @@ describe('AuthController', () => {
   let server;
   let agent;
 
-  const authDetails = {
-    username: 'marko',
+  const authDetails1 = {
+    username: 'spec-like-service-1',
     password: 'random-dice-4',
+  };
+  const authDetails2 = {
+    username: 'spec-like-service-2',
+    password: 'random-dice-6',
   };
 
   beforeAll(async () => {
@@ -31,15 +35,12 @@ describe('AuthController', () => {
     await app.init();
     agent = supertest.agent(server);
 
-    // delete test user
-    await userService.delete(undefined, authDetails.username);
-    await userService.delete(undefined, 'another-user');
   });
 
   it('should sign up', async () => {
     await agent
       .post('/signup')
-      .send(authDetails)
+      .send(authDetails1)
       .expect(201)
       .expect('set-cookie', /token/)
       .expect('set-cookie', /HttpOnly/);
@@ -53,17 +54,14 @@ describe('AuthController', () => {
       .expect(200)
       .expect('set-cookie', /token/)
       .expect('set-cookie', /HttpOnly/)
-      .expect({ username: authDetails.username });
+      .expect({ username: authDetails1.username });
   });
 
   it('should signup another user', async () => {
     await supertest
       .agent(server)
       .post('/signup')
-      .send({
-        username: 'another-user',
-        password: 'randompassword21',
-      })
+      .send(authDetails2)
       .expect(201)
       .expect('set-cookie', /token/)
       .expect('set-cookie', /HttpOnly/);
@@ -71,15 +69,15 @@ describe('AuthController', () => {
 
   it('should get other user', async () => {
     await agent
-      .get('/user/another-user')
+      .get(`/user/${authDetails2.username}`)
       .set('Accept', 'application/json')
       .expect(200)
-      .expect({ username: 'another-user' });
+      .expect({ username: authDetails2.username });
   });
 
   afterAll(async () => {
-    await userService.delete(undefined, authDetails.username);
-    await userService.delete(undefined, 'another-user');
+    await userService.delete(undefined, authDetails1.username);
+    await userService.delete(undefined, authDetails2.username);
     await connection.close();
     await app.close();
   });

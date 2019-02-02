@@ -29,8 +29,8 @@ export class UserController {
   }
 
   @Get(':username')
-  async findOne(@Param('username') username: FindOneDto): Promise<UserStatusDto> {
-    let user = await this.userService.findOneOrFail({username: username});
+  async findOne(@Param() params: FindOneDto): Promise<UserStatusDto> {
+    let user = await this.userService.findOneOrFail({username: params.username});
     return {
       username: user.username
     }

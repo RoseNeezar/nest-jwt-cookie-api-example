@@ -22,6 +22,11 @@ describe('AuthService', () => {
   // let app: INestApplication;
   // let server;
 
+  const authDetails = {
+    username: 'spec-user-service-1',
+    password: 'random-dice-4',
+  };
+
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
@@ -40,7 +45,7 @@ describe('AuthService', () => {
     try {
       await authService.login({
         username: 'non-existing-username',
-        password: 'chgiunriurebxmrbgeumb',
+        password: authDetails.password,
       });
     } catch (e) {
       error = e;
@@ -49,19 +54,13 @@ describe('AuthService', () => {
   });
 
   it('should register new user', async () => {
-    user = await authService.signup({
-      username: 'testing-username',
-      password: 'some random password',
-    });
+    user = await authService.signup(authDetails);
   });
 
   it('should fail register existing user', async () => {
     let error;
     try {
-      await await authService.signup({
-        username: 'testing-username',
-        password: 'some random password',
-      });
+      await await authService.signup(authDetails);
     } catch (e) {
       error = e;
     }
@@ -72,7 +71,7 @@ describe('AuthService', () => {
     let error;
     try {
       await authService.login({
-        username: 'testing-username',
+        username: authDetails.username,
         password: 'wrong password',
       });
     } catch (e) {
@@ -82,15 +81,12 @@ describe('AuthService', () => {
   });
 
   it('should get user from username and password', async () => {
-    user = await authService.login({
-      username: 'testing-username',
-      password: 'some random password',
-    });
+    user = await authService.login(authDetails);
     expect(user).toBeInstanceOf(UserEntity);
   });
 
   afterAll(async () => {
-    await userService.delete(user.id);
+    await userService.delete(undefined, authDetails.username);
     await connection.close();
     // await app.close();
   });

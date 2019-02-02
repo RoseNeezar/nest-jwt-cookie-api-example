@@ -15,7 +15,7 @@ describe('AuthController', () => {
   let agent;
 
   const authDetails = {
-    username: 'marko',
+    username: 'spec-user-controller-1',
     password: 'random-dice-4',
   };
 
@@ -31,8 +31,6 @@ describe('AuthController', () => {
     await app.init();
     agent  = supertest.agent(server);
 
-    // delete test user
-    await userService.delete(undefined, authDetails.username);
   });
 
   it('should sign up', async () => {
@@ -108,6 +106,7 @@ describe('AuthController', () => {
   });
 
   afterAll(async () => {
+    await userService.delete(undefined, authDetails.username);
     await connection.close();
     await app.close();
   });
