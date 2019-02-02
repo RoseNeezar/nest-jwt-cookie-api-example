@@ -1,0 +1,8 @@
+GET http://localhost:3000/me
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+Cookie: {{token}}
+
+###
+

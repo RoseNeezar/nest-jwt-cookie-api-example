@@ -1,4 +1,4 @@
-# development docker-compose
+# testing docker-compose
 
 version: '3'
 
@@ -8,10 +8,10 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - NODE_ENV=development
+        - NODE_ENV=test
     environment:
       - NODE_ENV=development
-      - TYPEORM_HOST=postgres
+      - TYPEORM_HOST=postgrestest
       - TYPEORM_PORT=5432
       - TYPEORM_DATABASE=povioliked
       - TYPEORM_USERNAME=povioliked
@@ -19,17 +19,14 @@ services:
       - TYPEORM_SYNCHRONIZE=true
       - TYPEORM_MIGRATIONS_RUN=true
       - TYPEORM_ENTITIES=src/**/*.entity.ts
-      - SECRET_KEY=e9c87gnt4hmf8gwy9qg8gwberoi
+      - SECRET_KEY=75cgnt8uhgw9c8bonx9g8n8fx
     ports:
       - 3000:3000
-      - 9229:9229
     depends_on:
-      - postgres
+      - postgrestest
     links:
-      - postgres:postgres
-    #command: npm run start:dev
-    # debugger
-    command: npm run start:debug
+      - postgrestest:postgrestest
+    command: npm run test
     volumes:
       # development folders
       - ./src:/server/src:ro
@@ -37,14 +34,14 @@ services:
     networks:
       - povio-liked
 
-  postgres:
+  postgrestest:
     # Stable 11 - Final release November 9, 2023
     image: postgres:11.1-alpine
     restart: always
     ports:
       - 5432:5432
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgrestest:/var/lib/postgresql/data
     # todo - make a stable database with sample data for repeatable testing
       - ./seed/postgres/:/docker-entrypoint-initdb.d:ro
     environment:
@@ -55,7 +52,7 @@ services:
       - povio-liked
 
 volumes:
-  postgres:
+  postgrestest:
 
 networks:
   povio-liked:

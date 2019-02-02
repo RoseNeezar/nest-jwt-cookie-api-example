@@ -5,7 +5,8 @@ FROM node:10.15.0-alpine
 WORKDIR /server
 COPY . .
 
-RUN npm install --production && npm run build
+RUN npm install --production
+RUN npm run build
 CMD ["node", "dist/main.js"]
 EXPOSE 3000
 

@@ -1,0 +1,16 @@
+POST http://localhost:3000/login
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+  "username" : "marko",
+  "password" : "asdfsadasd"
+}
+
+> {%
+    client.global.set("token", response.headers.valueOf('Set-Cookie'));
+%}
+
+###
+
