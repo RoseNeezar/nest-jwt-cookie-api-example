@@ -1,4 +1,4 @@
-GET http://localhost:3000/most-liked
+GET http://localhost:3000/most-liked?limit=2&page=1
 Accept: */*
 Cache-Control: no-cache
 Content-Type: application/json

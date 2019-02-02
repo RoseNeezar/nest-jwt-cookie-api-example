@@ -10,7 +10,7 @@ export function router() {
     [RegExp(/^\/signup$/), '/auth/signup'],
     [RegExp(/^\/me\/update-password$/), '/auth/update-password'],
     [RegExp(/^\/me$/), '/user/me'],
-    [RegExp(/^\/most-liked$/), '/like/most-liked'],
+    [RegExp(/^\/most-liked(.+)?$/), '/like/most-liked$1'],
     [RegExp(/^\/user\/([^\/]+)\/like$/), '/like/user/$1/like'],
     [RegExp(/^\/user\/([^\/]+)\/unlike$/), '/like/user/$1/unlike'],
   ];
