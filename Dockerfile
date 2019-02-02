@@ -1,6 +1,6 @@
 
 # Node LTS ACTIVE until Apr 2020
-FROM node:10.15.0-alpine
+FROM node:8.15.0-alpine
 
 WORKDIR /server
 COPY . .
